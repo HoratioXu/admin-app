@@ -177,5 +177,71 @@ router.get('/manage/category/info', (req, res) => {
         })
 });
 
+router.post('/manage/product/add', (req, res) => {
+    const product = req.body;
+    ProductModel.create(product)
+        .then(product => {
+            res.send({status: 0, data: product});
+        })
+        .catch(error => {
+            console.error('add product error', error);
+            res.send({status: 1, msg: 'Failed to add product, please try again'});
+        })
+});
+
+router.get('/manage/product/list', (req, res) => {
+    const {pageNum, pageSize} = req.query;
+    ProductModel.find({})
+        .then(products => {
+            res.send({status: 0, data: pageFilter(products, pageNum, pageSize)});
+        })
+        .catch(error => {
+            console.error('get product list error', error);
+            res.send({status: 1, msg: 'Failed to get product list, please try again'})
+        });
+});
+
+router.get('/manage/product/search', (req, res) => {
+    const {pageNum, pageSize, searchName, productName, productDesc} = req.query;
+    let condition = {};
+    if (productName) {
+        condition = {name: new RegExp(`^.*${productName}.*$`)}
+    } else if (productDesc) {
+        condition = {desc: new RegExp(`^.*${productDesc}.*$`)}
+    }
+    ProductModel.find(condition)
+        .then(products => {
+            res.send({status: 0, data: pageFilter(products, pageNum, pageSize)});
+        })
+        .catch(error => {
+            console.error('search product error', error);
+            res.send({status: 1, msg: 'Failed to search product, please try again'})
+        });
+});
+
+router.post('/manage/product/update', (req, res) => {
+    const product = req.body;
+    ProductModel.findOneAndUpdate({_id: product._id}, product)
+        .then(oldProduct => {
+            res.send({status: 0})
+        })
+        .catch(error => {
+            console.error('update product error', error);
+            res.send({status: 1, msg: 'Failed to update product, please try again'});
+        });
+});
+
+router.post('/manage/product/updateStatus', (req, res) => {
+    const {productId, status} = req.body;
+    ProductModel.findOneAndUpdate({_id: productId}, {status})
+        .then(oldProduct => {
+            res.send({status: 0})
+        })
+        .catch(error => {
+            console.error('change product status error', error);
+            res.send({status: 1, msg: 'Failed to change product status, please try again'})
+        });
+});
+
 module.exports = router;
 
