@@ -129,6 +129,53 @@ router.post('/manage/role/update', (req, res) => {
         });
 });
 
+router.post('/manage/category/add', (req, res) => {
+    const {categoryName, parentId} = req.body;
+    CategoryModel.create({name: categoryName, parentId: parentId || '0'})
+        .then(category => {
+            res.send({status: 0, data: category});
+        })
+        .catch(error => {
+            console.error('create category error', error);
+            res.send({status: 1, msg: 'Failed to create category, please try again'});
+        });
+});
+
+router.get('/manage/category/list', (req, res) => {
+    const parentId = req.query.parentId || '0';
+    CategoryModel.find({parentId})
+        .then(categories => {
+            res.send({status: 0, data: categories});
+        })
+        .catch(error => {
+            console.error('get category list error', error);
+            res.send({status: 1, msg: 'Failed to get category list, please try again'});
+        });
+});
+
+router.post('/manage/category/update', (req, res) => {
+    const {categoryId, categoryName} = req.body;
+    CategoryModel.findOneAndUpdate({_id: categoryId}, {name: categoryName})
+        .then(oldCategory => {
+            res.send({status: 0});
+        })
+        .catch(error => {
+            console.error('update category error', error);
+            res.send({status: 1, msg: 'Failed to update category, please try again'});
+        });
+});
+
+router.get('/manage/category/info', (req, res) => {
+    const categoryId = req.query.categoryId;
+    CategoryModel.findOne({_id: categoryId})
+        .then(category => {
+            res.send({status: 0, data: category});
+        })
+        .catch(error => {
+            console.error('get category info error', error);
+            res.send({status: 1, msg: 'Failed to get category info, please try again'});
+        })
+});
 
 module.exports = router;
 
