@@ -235,13 +235,35 @@ router.post('/manage/product/updateStatus', (req, res) => {
     const {productId, status} = req.body;
     ProductModel.findOneAndUpdate({_id: productId}, {status})
         .then(oldProduct => {
-            res.send({status: 0})
+            res.send({status: 0});
         })
         .catch(error => {
             console.error('change product status error', error);
             res.send({status: 1, msg: 'Failed to change product status, please try again'})
         });
 });
+
+function pageFilter(arr, pageNum, pageSize) {
+    pageNum = pageNum * 1;
+    pageSize = pageSize * 1;
+    const total = arr.length;
+    const pages = Math.floor((total + pageSize - 1) / pageSize);
+    const start = pageSize * (pageNum - 1);
+    const end = start + pageSize <= total ? start + pageSize : total;
+    const list = [];
+    for (let i = start; i < end; i++) {
+        list.push(arr[i]);
+    }
+    return {
+        pageNum,
+        total,
+        pages,
+        pageSize,
+        list
+    }
+}
+
+require('./file-upload')(router);
 
 module.exports = router;
 
