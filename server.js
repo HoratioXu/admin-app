@@ -31,9 +31,9 @@ mongoose.connect('mongodb://localhost/admin-panel', {useNewUrlParser: true})
     .then(() => {
         console.log('MongoDB connect success');
         server.listen('5000', () => {
-            console.log('Server success: http://localhost:5000')
+            console.log('Server success: http://localhost:5000');
         });
     })
     .catch(error => {
-        console.error('Failed to connect to MongoDB', error)
+        console.error('Failed to connect to MongoDB', error);
     });
