@@ -79,5 +79,18 @@ router.post('/manage/user/delete', (req, res) => {
         });
 });
 
+router.get('/manage/user/list', (req, res) => {
+    UserModel.find({username: {'$ne': 'admin'}})
+        .then(users => {
+            RoleModel.find().then(roles => {
+                res.send({status: 0, data: {users, roles}});
+            });
+        })
+        .catch(error => {
+            console.error('get user list error', error);
+            res.send({status: 1, msg: 'Failed to get user list, please try again'});
+        });
+});
+
 module.exports = router;
 
