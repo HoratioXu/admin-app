@@ -24,7 +24,7 @@ server.use((req, res) => {
             });
             res.end(data)
         }
-    })
+    });
 });
 
 mongoose.connect('mongodb://localhost/admin-panel', {useNewUrlParser: true})
